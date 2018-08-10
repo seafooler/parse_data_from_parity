@@ -2,6 +2,7 @@ import requests
 import datetime
 import pytz
 import pymysql
+from multiprocessing import Pool
 
 
 rpc_ip = "http://localhost"
@@ -150,6 +151,35 @@ def last_block_of_day(year, month, day):
         tmp_ts = query_timestamp_of_block(tmp_bn)
     return tmp_bn
     
+
+# Split a large list into several smaller sub-lists and then run the function with each sub_list as argument
+# arg1: list object
+# arg2: number of parallel progresses
+# arg3: a function with list as argument
+def map_list(large_list, par, func):
+    sublist_len = len(large_list) // par
+    sublists = []
+    for i in range(par-1):
+        tmp_list = large_list[i*sublist_len:(i+1)*sublist_len]
+        sublists.append(tmp_list)
+    tmp_list = large_list[(par-1)*sublist_len:]
+    sublists.append(tmp_list)
+    p = Pool(par)
+    results = p.map(func, sublists)
+    p.close()
+    return results    
+
+
+# There are many groups of arguments and each group contains multiple arguments
+# arg1: list of args group
+# arg2: a function with multiple arguments
+def map_args_group(args_group_list, func):
+    par = len(args_group_list)
+    p = Pool(par)
+    results = p.starmap(func, args_group_list)
+    p.close()
+#     print ("{} has been finished".format(args_group_list))
+    return results
 
     
 ######################################################################
