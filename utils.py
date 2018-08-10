@@ -151,6 +151,11 @@ def last_block_of_day(year, month, day):
     return tmp_bn
     
 
+    
+######################################################################
+######################## Operate the database #######################
+######################################################################
+
 def exeSQL(sql, commit=False):
     connection = pymysql.connect(**db_config)
     try:
@@ -194,6 +199,19 @@ def insert_multiple_actions(parsed_entries, table_name='action_20161001_20161231
         sql = """INSERT INTO {} (directive, source, target, amount, tx, block_num, tx_seq, act_seq) 
             VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(table_name, *en)
         insert_act_sqls.append(sql)
-    exeMultipleSQL(insert_act_sqls, True)    
+    exeMultipleSQL(insert_act_sqls, True)
     
+def create_action_table(table_name):
+    create_action_sql = """CREATE TABLE {} ( `act_id` int(11) NOT NULL AUTO_INCREMENT,
+                `directive` enum('call','create','reward-block','reward-uncle','suicide') NOT NULL, 
+                `source` char(42) NOT NULL, `target` char(42) NOT NULL, `amount` varchar(32) NOT NULL, 
+                `tx` char(66) NOT NULL, `block_num` int(11) NOT NULL, `tx_seq` int(11) NOT NULL, 
+                `act_seq` int(11) NOT NULL, PRIMARY KEY (`act_id`), 
+                UNIQUE KEY `unique_action` (`block_num`,`tx_seq`,`act_seq`), KEY `block_num_index` (`block_num`), 
+                FULLTEXT `target_index` (`target`), FULLTEXT `source_index` (`source`), 
+                FULLTEXT `tx_index` (`tx`) ) ENGINE=InnoDB""".format(table_name)
+    exeSQL(create_action_sql, True)
     
+def drop_table(table_name):
+    drop_table_sql = """DROP TABLE {}""".format(table_name)
+    exeSQL(drop_table_sql)
