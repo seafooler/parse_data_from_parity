@@ -18,6 +18,12 @@ db_config = {
 
 lowest_bn = 1
 
+def hex2wei(s):
+    return int(s, 16)
+
+def wei2eth(w):
+    return w/10**18
+
 # return the 1st timestamp of day
 def date_to_timestamp(year, month, day, tz_str='utc'):
     dt = datetime.datetime(year, month, day)
