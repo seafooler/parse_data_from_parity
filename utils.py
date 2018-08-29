@@ -250,4 +250,10 @@ def create_action_table(table_name):
     
 def drop_table(table_name):
     drop_table_sql = """DROP TABLE {}""".format(table_name)
-    exeSQL(drop_table_sql)
+    exeSQL(drop_table_sql, True)
+    
+def insert_account(address, account_type, table_name):
+    insert_act_sql = """INSERT INTO {} (address, kind) 
+            VALUES ('{}', '{}')""".format(table_name, address, account_type)
+#     print(insert_act_sql)
+    exeSQL(insert_act_sql, True)

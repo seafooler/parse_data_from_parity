@@ -25,8 +25,8 @@ from utils import db_config
 from tqdm import tqdm as tqdm_no_notebook
 from tqdm import tqdm_notebook
 
-day_start = '20161001'
-day_until = '20161231'
+day_start = '20151001'
+day_until = '20151231'
 
 feature_table_name = "cluster_features_" + day_start + "_" + day_until
 action_table_name = "action_" + day_start + "_" + day_until + "_nointernal_noreward"
@@ -63,14 +63,14 @@ def fetchAddressSet(account_type):
     return set((flat_addrs))
 
 def fetchAddr():
-    if os.path.isfile('total_addr_set_20161001_20161231.pkl'):
-        with open('total_addr_set_20161001_20161231.pkl', 'rb') as f:
+    if os.path.isfile('total_addr_set_20151001_20151231.pkl'):
+        with open('total_addr_set_20151001_20151231.pkl', 'rb') as f:
             total_addr_set = pickle.load(f)
     else:
         source_set = fetchAddressSet('source')
         target_set = fetchAddressSet('target')
         total_addr_set = source_set.union(target_set)
-        with open('total_addr_set_20161001_20161231.pkl', 'wb') as f:
+        with open('total_addr_set_20151001_20151231.pkl', 'wb') as f:
             pickle.dump(total_addr_set, f)
     return total_addr_set
 
@@ -245,7 +245,7 @@ def insertFeaturesAllAddrs():
 
 
 # dropClusterFeatureTable()
-# initClusterFeaturesTable()
+initClusterFeaturesTable()
 # split_features = splitTxsPerAddr('0x571fd0e7d4995c4d0900d04943eaf324682d7c9c')
 # insertClusterFeatures(split_features)
 insertFeaturesAllAddrs()
