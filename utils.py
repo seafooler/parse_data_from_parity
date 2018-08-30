@@ -134,7 +134,6 @@ def last_block_of_day(year, month, day):
     dt = datetime.datetime(year, month, day)
     dt_next = dt + datetime.timedelta(days=1)
     target_ts = date_to_timestamp(dt_next.year, dt_next.month, dt_next.day)-1
-    
     # Step 1: Shorten the possible range
     while(True):
         tmp_bn = int(lowest_bn + (highest_bn-lowest_bn)*(target_ts-lowest_ts)/(highest_ts-lowest_ts))
@@ -150,11 +149,12 @@ def last_block_of_day(year, month, day):
         if (tmp_bn == int(lowest_bn + (highest_bn-lowest_bn)*(target_ts-lowest_ts)/(highest_ts-lowest_ts))):
             break
     # Step 2: Iterate from the upper bound of range
-    tmp_ts = highest_ts
-    tmp_bn = highest_bn
-    while(tmp_ts > target_ts):
-        tmp_bn -= 1
+    tmp_ts = lowest_ts
+    tmp_bn = lowest_bn
+    while(tmp_ts <= target_ts):
+        tmp_bn += 1
         tmp_ts = query_timestamp_of_block(tmp_bn)
+    tmp_bn -= 1
     return tmp_bn
     
 
