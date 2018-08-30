@@ -229,13 +229,20 @@ def insert_action(directive, source, target, amount, tx, block_num, tx_seq, act_
     exeSQL(insert_act_sql, True)
     
     
-def insert_multiple_actions(parsed_entries, table_name='action_20161001_20161231'):
+def insert_multiple_actions(parsed_entries, table_name):
     insert_act_sqls = []
     for en in parsed_entries:
         sql = """INSERT INTO {} (directive, source, target, amount, tx, block_num, tx_seq, act_seq) 
             VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(table_name, *en)
         insert_act_sqls.append(sql)
     exeMultipleSQL(insert_act_sqls, True)
+    
+def insert_multiple_accounts(parsed_entries, table_name):
+    insert_acc_sqls = []
+    for en in parsed_entries:
+        sql = """INSERT INTO {} (address, kind) VALUES ('{}', '{}')""".format(table_name, *en)
+        insert_acc_sqls.append(sql)
+    exeMultipleSQL(insert_acc_sqls, True)
     
 def create_action_table(table_name):
     create_action_sql = """CREATE TABLE {} ( `act_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -257,3 +264,9 @@ def insert_account(address, account_type, table_name):
             VALUES ('{}', '{}')""".format(table_name, address, account_type)
 #     print(insert_act_sql)
     exeSQL(insert_act_sql, True)
+    
+def fetchAddressSet(account_type, action_table_name):
+    fetch_addrs_sql = ("SELECT {} FROM {}").format(account_type, action_table_name)
+    addrs = exeSQL(fetch_addrs_sql)
+    flat_addrs = [item for sublist in addrs for item in sublist]
+    return set((flat_addrs))
